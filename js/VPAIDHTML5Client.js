@@ -103,11 +103,21 @@ VPAIDHTML5Client.prototype.loadAdUnit = function loadAdUnit(adURL, callback) {
 
     window.addEventListener('message', this._onLoad);
 
+    if (parent !== window) {
+        parent.window.addEventListener('message', this._onLoad);
+    }
+
     function onLoad (e) {
         /*jshint validthis: false */
         //don't clear timeout
         if (e.origin !== getOrigin()) return;
-        var result = JSON.parse(e.data);
+        var result;
+
+        try {
+            result = JSON.parse(e.data);
+        } catch (e) {
+            return;
+        }
 
         //don't clear timeout
         if (result.id !== that.getID()) return;
